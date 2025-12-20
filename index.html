@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walkout Trip - Adventure Awaits</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; color: #333; line-height: 1.6; background: #f9f9f9; }
+        
+        /* Navigation */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 10%; background: #fff; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .logo { font-weight: 600; font-size: 1.5rem; letter-spacing: 1px; color: #222; }
+        .logo span { color: #222; } /* Aksen warna logo */
+        .nav-links { list-style: none; display: flex; }
+        .nav-links li { margin-left: 30px; }
+        .nav-links a { text-decoration: none; color: #333; font-weight: 400; transition: 0.3s; }
+        .nav-links a:hover { color: #222; }
+
+        /* Sections */
+        section { padding: 80px 10%; }
+        h2 { text-align: center; margin-bottom: 40px; font-weight: 600; font-size: 2rem; }
+
+        /* Grid Open Trip */
+        .trip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .trip-card { 
+            background: #fff; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            transition: 0.3s; 
+            cursor: pointer;
+            position: relative;
+        }
+        .trip-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        .trip-img { width: 100%; height: 220px; background-color: #eee; background-size: cover; background-position: center; }
+        .trip-info { padding: 20px; }
+        .trip-info h3 { margin-bottom: 8px; font-size: 1.2rem; color: #222; }
+        .trip-info p { font-size: 0.85rem; color: #222; margin-bottom: 15px; }
+        .price { font-weight: 600; color: #222; font-size: 1.1rem; }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0; top: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: #fff;
+            margin: 5% auto;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            position: relative;
+            padding-bottom: 30px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #fff; z-index: 10; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .modal-banner { width: 100%; height: 250px; background-size: cover; background-position: center; border-radius: 15px 15px 0 0; }
+        .modal-body { padding: 30px; }
+        .modal-body h2 { text-align: left; margin-bottom: 10px; }
+        .modal-body h4 { margin: 15px 0 5px; color: #222; }
+        .modal-body ul { margin-left: 20px; font-size: 0.9rem; }
+
+        /* About Section */
+        #about { background: #fff; text-align: center; }
+        .about-content { max-width: 800px; margin: 0 auto; }
+
+        /* Button WhatsApp */
+        .btn-wa { display: inline-block; background: #25D366; color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; margin-top: 25px; transition: 0.3s; border: none; cursor: pointer; }
+        .btn-wa:hover { background: #128C7E; transform: scale(1.05); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav { padding: 15px 5%; }
+            section { padding: 60px 5%; }
+            .nav-links li { margin-left: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">WALKOUT<span>TRIP</span></div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <h2>Open Trip Terbaru</h2>
+        <div class="trip-grid" id="tripGrid">
+            </div>
+    </section>
+
+    <section id="about">
+        <div class="about-content">
+            <h2>About Walkout Trip</h2>
+            <p>Walkout Trip is your ultimate travel partner for escaping the daily grind. We focus on creating fun, safe, and memorable open trip experiences where you can meet new friends. Our main highlights are top-notch documentation service and comfortable routes for everyone.</p>
+            <a href="https://wa.me/6285811590544" class="btn-wa" target="_blank">Chat with us for trip details</a>
+        </div>
+    </section>
+
+    <div id="tripModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="modalData"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data Konten Trip
+        const trips = [
+            {
+                id: 1,
+                title: "Mt Prau",
+                price: "IDR 650.000",
+                img: "prau.jpg",
+                shortDesc: "Experience the best golden sunrise in Central Java.",
+                fasilitas: ["Round-trip AC Transportation","Entry Permits & Trekking Licenses", "Tents & Cooking Equipment","3x Meals (Standard Mountain Service)x", "Professional Guide & Documentation"],
+                itinerary: "Meeting point pickup, leisure trekking, campsite bonfire stories, and the majestic summit sunrise."
+            },
+            {
+                id: 2,
+                title: "Mt Sumbing",
+                price: "IDR 650.000",
+                img: "sumbing-2.jpg",
+                shortDesc: "Experience the majestic Double S peak and the breathtaking sea of clouds",
+                fasilitas: ["AC Transportation", "Professional Local Guide", "Basecamp & Permit Fees", "Camping Gear" ,"Meals & Hot Drinks", "Documentation"],
+                itinerary: "Midnight Start , Sunrise Point,The Peaks,Sumbing Crater"
+            },
+            {
+                id: 3,
+                title: "Mt Sindoro",
+                price: "IDR 650.000",
+                img: "sindoro-2.jpg",
+                shortDesc: "Famous for its vast crater and stunning edelweiss fields.",
+                fasilitas: ["Round-trip AC Transportation","Entry Permits & Trekking Licenses", "Tents & Cooking Equipment","3x Meals (Standard Mountain Service)x", "Professional Guide & Documentation"],
+                itinerary: "Midnight Summit Attack, Sunrise at the Summit  ,Edelweiss Fields"
+            },
+            {
+                id: 4,
+                title: "Mt Gede",
+                price: "IDR 200.000",
+                img: "gede.jpg",
+                shortDesc: "witness the vast Suryakencana edelweiss meadow.",
+                fasilitas: ["Round-trip AC Transportation","Entry Permits & Trekking Licenses", "Tents & Cooking Equipment","3x Meals (Standard Mountain Service)x", "Professional Guide & Documentation"],
+                itinerary: "Suryakencana Edelweiss Meadow, Gede Crater Exploration, Cibeureum Waterfall (Optional)"
+            },
+            {
+                id: 5,
+                title: "Mt Ciremai",
+                price: "IDR 400.000",
+                img: "ciremai.jpg",
+                shortDesc: "Challenge yourself to reach the Roof of West Java.",
+                fasilitas: ["Round-trip AC Transportation","Entry Permits & Trekking Licenses", "Tents & Cooking Equipment","3x Meals (Standard Mountain Service)x", "Professional Guide & Documentation"],
+                itinerary: "The Roof of West Java ($3,078$ masl), Massive Double Crater View ,Sunrise above the clouds"
+            },
+            {
+                id: 6,
+                title: "Mt  Guntur",
+                price: "IDR 400.000",
+                img: "guntur.jpg",
+                shortDesc: "Experience the unique 'Mini Semeru', featuring golden savannas",
+                fasilitas: ["Round-trip AC Transportation","Entry Permits & Trekking Licenses", "Tents & Cooking Equipment","3x Meals (Standard Mountain Service)x", "Professional Guide & Documentation"],
+                itinerary: "Savanna Trekking ,Summit Attack with City Light View,Exploring Guntur's Volcanic Peaks"
+            }
+        ];
+
+        // Render Kartu ke Grid
+        const tripGrid = document.getElementById('tripGrid');
+        trips.forEach(trip => {
+            tripGrid.innerHTML += `
+                <div class="trip-card" onclick="openModal(${trip.id})">
+                    <div class="trip-img" style="background-image: url('${trip.img}')"></div>
+                    <div class="trip-info">
+                        <h3>${trip.title}</h3>
+                        <p>${trip.shortDesc}</p>
+                        <div class="price">${trip.price}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Modal Logic
+        const modal = document.getElementById("tripModal");
+        const modalData = document.getElementById("modalData");
+        const closeBtn = document.getElementsByClassName("close-btn")[0];
+
+        function openModal(id) {
+            const trip = trips.find(t => t.id === id);
+            modalData.innerHTML = `
+                <div class="modal-banner" style="background-image: url('${trip.img}')"></div>
+                <div class="modal-body">
+                    <h2>${trip.title}</h2>
+                    <p>${trip.shortDesc}</p>
+                    <h4>Included Facilities:</h4>
+                    <ul>
+                        ${trip.fasilitas.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                    <h4>Itinerary : </h4>
+                    <p style="font-size: 0.9rem; color: #555;">${trip.itinerary}</p>
+                    <div style="text-align: center;">
+                        <a href="https://wa.me/6285811590544?text=Hai%20WalkoutTrip,%20I'd%20like%20to%20book%20a%20${trip.title}" 
+                           class="btn-wa" target="_blank">Book Now - ${trip.price}</a>
+                    </div>
+                </div>
+            `;
+            modal.style.display = "block";
+            document.body.style.overflow = "hidden"; // Disable scroll
+        }
+
+        closeBtn.onclick = () => {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+        }
+    </script>
+</body>
+</html>
