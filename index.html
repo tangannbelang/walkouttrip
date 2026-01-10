@@ -99,11 +99,12 @@
         </ul>
     </nav>
 
-    <section id="home">
-        <h2>Latest open trip</h2>
-        <div class="trip-grid" id="tripGrid">
-            </div>
-    </section>
+    <div id="home-page">
+        <section id="home">
+            <h2>Latest open trip</h2>
+            <div class="trip-grid" id="tripGrid"></div>
+        </section>
+    </div>
 
     <section id="about">
         <div class="about-content">
@@ -197,6 +198,32 @@
                 itinerary: "Savanna Trekking ,Summit Attack with City Light View,Exploring Guntur's Volcanic Peaks"
             }
         ];
+
+        function showPage(pageId) {
+            const homePage = document.getElementById('home-page');
+            const blogPage = document.getElementById('blog-page');
+            const aboutSection = document.getElementById('about');
+
+        if (pageId === 'blog') {
+            // Sembunyikan Home & About, Tampilkan Blog
+            homePage.style.display = 'none';
+            aboutSection.style.display = 'none';
+            blogPage.style.display = 'block';
+            window.scrollTo(0, 0); // Reset scroll ke atas
+        } else if (pageId === 'home') {
+            // Tampilkan Home & About, Sembunyikan Blog
+            homePage.style.display = 'block';
+            aboutSection.style.display = 'block';
+            blogPage.style.display = 'none';
+            window.scrollTo(0, 0);
+        } else if (pageId === 'about') {
+        // Jika klik About, pastikan konten utama muncul lalu scroll ke About
+            homePage.style.display = 'block';
+            aboutSection.style.display = 'block';
+            blogPage.style.display = 'none';
+            document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+        }
+        }
 
         // Render Kartu ke Grid
         const tripGrid = document.getElementById('tripGrid');
